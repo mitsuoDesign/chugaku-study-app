@@ -7,8 +7,6 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: #f0f4f8; min-height: 100vh; color: #2d3748; }
-
-  /* Layout */
   .app { max-width: 800px; margin: 0 auto; padding: 16px; }
   header { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
   header h1 { font-size: 1.2rem; font-weight: 700; }
@@ -16,16 +14,31 @@
   .back-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; display: none; }
   .back-btn:hover { background: rgba(255,255,255,0.35); }
 
-  /* Screens */
   .screen { display: none; }
   .screen.active { display: block; animation: fadeIn 0.2s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
-  /* Cards */
   .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 16px; }
   .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: #1e40af; }
 
-  /* Subject buttons */
+  /* Loading */
+  .loading-wrap { text-align: center; padding: 60px 20px; }
+  .loading-spinner { width: 48px; height: 48px; border: 4px solid #e5e7eb; border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: #6b7280; font-size: 0.95rem; }
+
+  /* Sheet URL setup */
+  .setup-card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .setup-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+  .setup-desc { font-size: 0.85rem; color: #6b7280; margin-bottom: 16px; line-height: 1.6; }
+  .setup-input { width: 100%; border: 2px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; font-size: 0.9rem; margin-bottom: 10px; outline: none; }
+  .setup-input:focus { border-color: #93c5fd; }
+  .setup-btn { background: #2563eb; color: white; border: none; border-radius: 8px; padding: 11px 20px; font-size: 0.9rem; font-weight: 600; cursor: pointer; width: 100%; }
+  .setup-btn:hover { background: #1d4ed8; }
+  .setup-hint { font-size: 0.78rem; color: #9ca3af; margin-top: 8px; line-height: 1.6; }
+  .setup-error { background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #dc2626; margin-bottom: 12px; display: none; }
+
+  /* Subject */
   .subject-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
   .subject-btn { background: white; border: 2px solid transparent; border-radius: 16px; padding: 24px 16px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.2s; }
   .subject-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
@@ -35,7 +48,7 @@
   .subject-btn .label { font-size: 1.1rem; font-weight: 700; }
   .subject-btn .score-badge { display: inline-block; font-size: 0.75rem; background: #f3f4f6; border-radius: 20px; padding: 2px 10px; margin-top: 6px; color: #6b7280; }
 
-  /* Unit list */
+  /* Units */
   .unit-list { list-style: none; }
   .unit-item { display: flex; align-items: center; justify-content: space-between; background: white; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.07); border-left: 4px solid #e5e7eb; transition: all 0.15s; }
   .unit-item:hover { transform: translateX(4px); box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
@@ -60,7 +73,6 @@
   .question-text { font-size: 1.05rem; font-weight: 600; line-height: 1.7; margin-bottom: 20px; }
   .question-passage { background: #f8fafc; border-left: 3px solid #cbd5e1; padding: 12px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 0.9rem; line-height: 1.8; color: #374151; }
 
-  /* Choices */
   .choices { display: grid; gap: 10px; }
   .choice-btn { background: white; border: 2px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; text-align: left; cursor: pointer; font-size: 0.95rem; transition: all 0.15s; line-height: 1.5; }
   .choice-btn:hover:not(:disabled) { border-color: #93c5fd; background: #eff6ff; }
@@ -68,7 +80,6 @@
   .choice-btn.wrong { border-color: #ef4444; background: #fff5f5; color: #991b1b; }
   .choice-btn:disabled { cursor: default; }
 
-  /* Fill-in */
   .fill-input { width: 100%; border: 2px solid #e5e7eb; border-radius: 10px; padding: 12px 16px; font-size: 1rem; margin-bottom: 12px; outline: none; transition: border-color 0.15s; }
   .fill-input:focus { border-color: #93c5fd; }
   .fill-input.correct { border-color: #10b981; background: #ecfdf5; }
@@ -77,16 +88,14 @@
   .submit-btn:hover { background: #1d4ed8; }
   .submit-btn:disabled { background: #93c5fd; cursor: default; }
 
-  /* Explanation */
   .explanation { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 14px 16px; margin-top: 16px; font-size: 0.9rem; line-height: 1.7; display: none; }
   .explanation.show { display: block; animation: fadeIn 0.2s ease; }
   .explanation-title { font-weight: 700; color: #92400e; margin-bottom: 6px; }
-  .result-icon { font-size: 1.5rem; margin-bottom: 4px; }
   .next-btn { background: #2563eb; color: white; border: none; border-radius: 10px; padding: 13px 28px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; transition: background 0.15s; display: none; }
   .next-btn:hover { background: #1d4ed8; }
   .next-btn.show { display: block; }
 
-  /* Results */
+  /* Result */
   .result-summary { text-align: center; padding: 24px 0; }
   .result-score { font-size: 3.5rem; font-weight: 800; color: #2563eb; }
   .result-label { font-size: 1rem; color: #6b7280; margin-top: 4px; }
@@ -97,28 +106,23 @@
   .btn-primary { background: #2563eb; color: white; border: none; border-radius: 10px; padding: 12px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.15s; }
   .btn-primary:hover { background: #1d4ed8; }
 
-  /* Progress dashboard */
+  /* Progress */
   .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
   .stat-card { background: white; border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
   .stat-value { font-size: 1.6rem; font-weight: 800; color: #2563eb; }
   .stat-label { font-size: 0.72rem; color: #6b7280; margin-top: 2px; }
-  .weak-section { margin-top: 8px; }
-  .weak-title { font-size: 0.85rem; font-weight: 700; color: #ef4444; margin-bottom: 8px; }
   .weak-item { background: #fff5f5; border: 1px solid #fecaca; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.15s; }
   .weak-item:hover { background: #fee2e2; }
   .weak-item-name { font-size: 0.9rem; font-weight: 600; }
-  .weak-item-acc { font-size: 0.85rem; color: #ef4444; font-weight: 700; }
   .review-btn { font-size: 0.75rem; background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; }
 
-  /* Nav tabs */
   .nav-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
   .nav-tab { flex: 1; padding: 10px; text-align: center; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; border: 2px solid #e5e7eb; background: white; color: #6b7280; transition: all 0.15s; }
   .nav-tab.active { background: #2563eb; color: white; border-color: #2563eb; }
 
-  /* Misc */
   .no-data { text-align: center; color: #9ca3af; padding: 24px; font-size: 0.9rem; }
-  .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: #374151; display: flex; align-items: center; gap: 8px; }
-  .badge-new { font-size: 0.7rem; background: #dbeafe; color: #1d4ed8; padding: 2px 8px; border-radius: 20px; }
+  .section-title { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: #374151; }
+  .sheet-link { font-size: 0.78rem; color: #6b7280; text-align: right; margin-bottom: 8px; cursor: pointer; text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -131,14 +135,43 @@
     <button class="back-btn" id="back-btn" onclick="goBack()">← もどる</button>
   </header>
 
-  <!-- Home Screen -->
-  <div class="screen active" id="screen-home">
+  <!-- Loading -->
+  <div class="screen active" id="screen-loading">
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">問題を読み込んでいます…</div>
+    </div>
+  </div>
+
+  <!-- Setup (初回・URL未設定) -->
+  <div class="screen" id="screen-setup">
+    <div class="setup-card">
+      <div class="setup-title">📋 Googleスプレッドシートを連携する</div>
+      <div class="setup-desc">問題をGoogleスプレッドシートで管理できます。<br>スプレッドシートを公開してURLを貼り付けてください。</div>
+      <div class="setup-error" id="setup-error"></div>
+      <input class="setup-input" id="sheet-url-input" type="url" placeholder="https://docs.google.com/spreadsheets/d/..." />
+      <button class="setup-btn" onclick="saveSheetUrl()">接続する</button>
+      <div class="setup-hint">
+        ※ スプレッドシートの設定手順：<br>
+        ①「ファイル」→「共有」→「ウェブに公開」を選択<br>
+        ②「シート1」「CSV」を選んで「公開」をクリック<br>
+        ③ 表示されたURLをここに貼り付ける<br><br>
+        ※ スプレッドシートの列：<br>
+        subject / unit / type / question / passage / choices / answer / altAnswers / explanation<br>
+        ※ choices は選択肢を「|」で区切る（例：東京|大阪|名古屋|福岡）
+      </div>
+    </div>
+  </div>
+
+  <!-- Home -->
+  <div class="screen" id="screen-home">
     <div class="nav-tabs">
       <div class="nav-tab active" onclick="showTab('tab-study')">学習</div>
       <div class="nav-tab" onclick="showTab('tab-progress')">進捗</div>
     </div>
 
     <div id="tab-study">
+      <div class="sheet-link" onclick="changeSheetUrl()">📋 スプレッドシートを変更</div>
       <div class="section-title">📚 教科を選ぼう</div>
       <div class="subject-grid">
         <div class="subject-btn kokugo" onclick="selectSubject('kokugo')">
@@ -152,36 +185,26 @@
           <div class="score-badge" id="sansu-badge">未学習</div>
         </div>
       </div>
-
       <div id="weak-summary-home"></div>
     </div>
 
     <div id="tab-progress" style="display:none">
       <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label">総問題数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-correct">0</div>
-          <div class="stat-label">正解数</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-acc">-</div>
-          <div class="stat-label">正解率</div>
-        </div>
+        <div class="stat-card"><div class="stat-value" id="stat-total">0</div><div class="stat-label">総問題数</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-correct">0</div><div class="stat-label">正解数</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-acc">-</div><div class="stat-label">正解率</div></div>
       </div>
       <div id="progress-detail"></div>
     </div>
   </div>
 
-  <!-- Unit Selection Screen -->
+  <!-- Units -->
   <div class="screen" id="screen-units">
     <div class="section-title" id="unit-screen-title">単元を選ぼう</div>
     <ul class="unit-list" id="unit-list"></ul>
   </div>
 
-  <!-- Quiz Screen -->
+  <!-- Quiz -->
   <div class="screen" id="screen-quiz">
     <div class="quiz-header">
       <span class="quiz-count" id="quiz-count">1/10</span>
@@ -201,7 +224,7 @@
     </div>
   </div>
 
-  <!-- Result Screen -->
+  <!-- Result -->
   <div class="screen" id="screen-result">
     <div class="card">
       <div class="result-summary">
@@ -222,105 +245,140 @@
 </div>
 
 <script>
-// ===================== DATA =====================
-const QUESTIONS = {
-  kokugo: {
-    "漢字（読み）": [
-      { q:"「美術」の読み方は？", type:"choice", choices:["びじゅつ","うつくしい","けいじゅつ","びじょ"], answer:0, exp:"美術（びじゅつ）は絵画・彫刻など視覚芸術の総称です。「美」＝び、「術」＝じゅつ。" },
-      { q:"「複雑」の読み方は？", type:"choice", choices:["ふくざつ","ふくぞう","ふくさつ","ふくさい"], answer:0, exp:"複雑（ふくざつ）。「複」は「ふく」、「雑」は「ざつ」と読みます。" },
-      { q:"「遺産」の読み方は？", type:"choice", choices:["いさん","ゆいさん","ゆいざん","いざん"], answer:0, exp:"遺産（いさん）。「遺」は「のこす」という意味で「い」と読みます。" },
-      { q:"「憂鬱」の読み方は？", type:"choice", choices:["ゆううつ","ゆうわつ","ゆうきつ","きゅううつ"], answer:0, exp:"憂鬱（ゆううつ）。気持ちがふさぎこむようすを表します。書くのが難しい漢字の代表例です。" },
-      { q:"「矛盾」の読み方は？", type:"choice", choices:["むじゅん","もじゅん","むずかん","むじかん"], answer:0, exp:"矛盾（むじゅん）。つじつまが合わないことを指します。中国の故事から来た言葉です。" },
-    ],
-    "漢字（書き）": [
-      { q:"「かんしゃ」（感謝）を漢字で書くと？", type:"fill", answer:"感謝", exp:"「感」謝の「感」は「心」+「咸」、「謝」は「言」+「射」。感謝の気持ちを表す大切な漢字です。" },
-      { q:"「きょうそう」（競争）を漢字で書くと？", type:"fill", answer:"競争", exp:"「競」は「たがいに張り合う」、「争」は「あらそう」。中学受験でよく出る漢字です。" },
-      { q:"「ぼうけん」（冒険）を漢字で書くと？", type:"fill", answer:"冒険", exp:"「冒」は「おかす・おそれずに進む」、「険」は「けわしい」。冒険＝危険をおかして進むこと。" },
-      { q:"「きかく」（企画）を漢字で書くと？", type:"fill", answer:"企画", exp:"「企」は「たくらむ・くわだてる」、「画」は「はかる・計画する」。" },
-      { q:"「おんけい」（恩恵）を漢字で書くと？", type:"fill", answer:"恩恵", exp:"「恩」は「めぐみ・恩義」、「恵」は「めぐむ」。恵まれることを「恩恵を受ける」と言います。" },
-    ],
-    "語句・慣用句": [
-      { q:"「石の上にも三年」の意味として正しいのは？", type:"choice", choices:["つらくても辛抱すれば成功する","石は三年でくずれる","石の上は冷たい","三年間休まずに勉強する"], answer:0, exp:"「石の上にも三年」は、つらいことでも辛抱強く続ければ必ず成果が出るという意味のことわざです。" },
-      { q:"「棚からぼたもち」の意味は？", type:"choice", choices:["思いがけない幸運が来ること","努力の結果が実ること","高いところにあるものを取ること","急いでも無駄なこと"], answer:0, exp:"「棚からぼたもち」は、何もしていないのに偶然よいことが起きるという意味のことわざです。" },
-      { q:"「頭が上がらない」の意味は？", type:"choice", choices:["頭を下げるしかないほど恩がある","頭が痛い","考えることができない","謙虚なこと"], answer:0, exp:"「頭が上がらない」は、相手に対して負い目や恩があって対等に接することができない、という意味の慣用句です。" },
-      { q:"「二の足を踏む」の意味は？", type:"choice", choices:["ためらって前に進めない","二歩目を踏み出す","二回失敗する","早足で歩く"], answer:0, exp:"「二の足を踏む」は、踏み出そうとして足がとまってしまうことから、決断できずにためらうことを意味します。" },
-      { q:"「さじを投げる」の意味は？", type:"choice", choices:["どうにもできないとあきらめる","道具を大切にしない","挑戦する","料理をやめる"], answer:0, exp:"医者が治療を断念してさじ（薬を調合するための匙）を投げることから、「もうどうにもできない」とあきらめることを表します。" },
-    ],
-    "文章読解": [
-      { q:"次の文を読んで、「彼」の気持ちとして最もふさわしいものを選びなさい。\n「彼はテストの結果を見て、思わず窓の外に目をそらした。」", type:"choice", passage:"彼はテストの結果を見て、思わず窓の外に目をそらした。先生の声が遠く聞こえる気がした。", choices:["喜んでいる","恥ずかしくて現実から逃げたい","退屈している","好奇心が高まっている"], answer:1, exp:"「目をそらす」＝直視できないほど動揺している。「先生の声が遠く聞こえる」＝心ここにあらず。これらの描写から、テスト結果を直視できない恥ずかしさや落胆が読み取れます。" },
-      { q:"「春の雪は名残雪と呼ばれる」という文から読み取れることは？", type:"choice", choices:["春の雪は特別な呼び名がある","春にはよく雪が降る","雪は春にだけ降る","名残雪は冬の雪のこと"], answer:0, exp:"「名残雪」は春に降る雪の呼び名です。文章から「春の雪」に「名残雪」という特別な名前があることが読み取れます。" },
-      { q:"「接続詞」の問題：「______、彼女は諦めなかった。」に入る最も適切な接続詞は？（前の文：「何度失敗しても。」）", type:"choice", choices:["しかし","それでも","だから","なぜなら"], answer:1, exp:"「それでも」は、前の内容に反してもなお、という逆接・継続の意味を持ちます。「何度失敗しても、それでも諦めなかった」は自然な文脈です。" },
-      { q:"「傍線部の説明として最も適切なもの」タイプの問題です。\n「彼の笑顔は作り物のようだった」の意味は？", type:"choice", choices:["本心から笑っていない様子","笑顔が上手な様子","芸術的な笑顔","笑顔が見えない様子"], answer:0, exp:"「作り物のよう」＝本物ではない、わざとらしい、という比喩表現です。心から笑えていない様子を表しています。" },
-    ],
-  },
-  sansu: {
-    "計算（整数・分数）": [
-      { q:"132 × 25 を計算しなさい。", type:"fill", answer:"3300", exp:"132 × 25 = 132 × 100 ÷ 4 = 13200 ÷ 4 = 3300。25を100÷4と考えると計算が速くなります。" },
-      { q:"3/4 ÷ 9/8 を計算しなさい（分数で答えること）", type:"fill", answer:"2/3", exp:"3/4 ÷ 9/8 = 3/4 × 8/9 = 24/36 = 2/3。割り算は逆数をかけます。" },
-      { q:"1 + 2 + 3 + ・・・ + 100 はいくつですか？", type:"fill", answer:"5050", exp:"ガウスの公式：(1+100)×100÷2 = 101×50 = 5050。最初と最後を足した数×個数÷2で求められます。" },
-      { q:"48 の約数の個数はいくつですか？", type:"fill", answer:"10", exp:"48 = 2⁴ × 3¹。約数の個数 = (4+1)×(1+1) = 10個。素因数分解して指数に1を足してかけます。" },
-      { q:"0.125 を分数で表しなさい（最も簡単な形で）", type:"fill", answer:"1/8", exp:"0.125 = 125/1000 = 1/8。または 0.125 × 8 = 1 なので 1/8 と分かります。" },
-    ],
-    "速さ・距離・時間": [
-      { q:"時速60kmで2時間30分走ると、何km進みますか？", type:"fill", answer:"150", exp:"2時間30分 = 2.5時間。距離 = 60 × 2.5 = 150km。「はじき」の公式：距離＝速さ×時間。" },
-      { q:"12kmの道のりを分速200mで歩くと、何分かかりますか？", type:"fill", answer:"60", exp:"12km = 12000m。時間 = 12000 ÷ 200 = 60分。単位をそろえることが重要です。" },
-      { q:"A君は家から学校まで毎分80mで歩くと15分かかります。毎分120mで走ると何分かかりますか？", type:"fill", answer:"10", exp:"距離 = 80 × 15 = 1200m。時間 = 1200 ÷ 120 = 10分。まず距離を求めるのがポイントです。" },
-      { q:"上りに2時間、下りに1時間30分かかった山道があります。上りの速さが時速3kmのとき、下りの速さは時速何kmですか？", type:"fill", answer:"4", exp:"距離 = 3 × 2 = 6km。下りの速さ = 6 ÷ 1.5 = 時速4km。" },
-      { q:"AとBが同じ地点から反対方向に走ります。Aは分速70m、Bは分速80mです。2人が出会うのは何分後ですか？（2人合わせて1500m離れるとき）", type:"fill", answer:"10", exp:"1分間に2人合わせて70+80=150m離れます。1500÷150=10分後に出会います。" },
-    ],
-    "割合・比": [
-      { q:"定価800円の品物を20%引きで買いました。代金はいくらですか？", type:"fill", answer:"640", exp:"20%引き＝80%の値段。800 × 0.8 = 640円。または 800 × 20/100 = 160円引き → 800-160 = 640円。" },
-      { q:"あるクラスの人数は40人で、女子は24人です。女子の割合は何%ですか？", type:"fill", answer:"60", exp:"24 ÷ 40 = 0.6 → 60%。割合 = 比べる量 ÷ もとにする量。" },
-      { q:"A:B = 3:4、B:C = 2:5 のとき、A:B:C を求めなさい。", type:"fill", answer:"6:8:20", exp:"BをそろえるためにA:B=3:4を6:8に、B:C=2:5を8:20に変換。よってA:B:C=6:8:20。最大公約数で簡単にすると3:4:10。両方正解とします。", altAnswers:["3:4:10"] },
-      { q:"食塩水200gに食塩が30g溶けています。この食塩水の濃度は何%ですか？", type:"fill", answer:"15", exp:"濃度(%) = 食塩の量 ÷ 食塩水の量 × 100 = 30 ÷ 200 × 100 = 15%。" },
-      { q:"原価に30%の利益を見込んで定価をつけました。定価が1300円のとき、原価はいくらですか？", type:"fill", answer:"1000", exp:"定価 = 原価 × 1.3 → 原価 = 1300 ÷ 1.3 = 1000円。" },
-    ],
-    "図形": [
-      { q:"半径5cmの円の面積は何cm²ですか？（π=3.14）", type:"fill", answer:"78.5", exp:"円の面積 = 半径 × 半径 × π = 5 × 5 × 3.14 = 78.5cm²。" },
-      { q:"底辺8cm、高さ6cmの三角形の面積は何cm²ですか？", type:"fill", answer:"24", exp:"三角形の面積 = 底辺 × 高さ ÷ 2 = 8 × 6 ÷ 2 = 24cm²。" },
-      { q:"1辺3cmの正方形を底面とし、高さ5cmの直方体の体積は何cm³ですか？", type:"fill", answer:"45", exp:"体積 = 底面積 × 高さ = (3×3) × 5 = 9 × 5 = 45cm³。" },
-      { q:"平行四辺形の底辺が10cm、高さが7cmのとき面積は何cm²ですか？", type:"fill", answer:"70", exp:"平行四辺形の面積 = 底辺 × 高さ = 10 × 7 = 70cm²。三角形と違って÷2しません。" },
-      { q:"正三角形の1辺が6cmのとき、周の長さは何cmですか？", type:"fill", answer:"18", exp:"正三角形は3辺が等しいので 6 × 3 = 18cm。" },
-    ],
-    "場合の数・規則性": [
-      { q:"1,2,3,4の4枚のカードから3枚を選んで作れる3桁の整数は何通りありますか？", type:"fill", answer:"24", exp:"百の位4通り × 十の位3通り × 一の位2通り = 24通り。順列 P(4,3) = 4×3×2 = 24。" },
-      { q:"5人の中から2人を選ぶ組み合わせは何通りですか？", type:"fill", answer:"10", exp:"C(5,2) = 5×4÷(2×1) = 10通り。組み合わせは順序を考えないので順列÷並べ方の数です。" },
-      { q:"1,1,2,3,5,8,13,...という数列の次の数はいくつですか？（フィボナッチ数列）", type:"fill", answer:"21", exp:"前の2つの数を足した数が次の数になります。8+13=21。フィボナッチ数列は自然界にも現れる有名な数列です。" },
-      { q:"正方形を右のように並べていくとき、10番目の図形のマッチ棒の本数は？（1番目:4本、2番目:7本、3番目:10本）", type:"fill", answer:"31", exp:"1番目:4本、増え方:3本ずつ。n番目 = 3n+1。10番目 = 3×10+1 = 31本。" },
-      { q:"赤・青・黄・白の4色で地図の隣り合う部分を違う色に塗ります。A-B-C-Dの4つの部分があり、A-B、B-C、C-Dが隣り合っているとき、塗り方は何通りありますか？", type:"fill", answer:"72", exp:"A:4通り、B:Aと違う3通り、C:Bと違う3通り、D:Cと違う3通り → 4×3×3×3=108通り。でも今回はより簡単な隣接のみなので4×3×3×3=108。実際の正解は問題の構造による。基本は4×3×3×3=108通り。", altAnswers:["108"] },
-    ],
+// ===================== CSV / SHEET =====================
+let QUESTIONS = {}; // { subject: { unit: [questions] } }
+
+function getSheetUrl() { return localStorage.getItem('sheetUrl') || ''; }
+function setSheetUrl(url) { localStorage.setItem('sheetUrl', url); }
+
+async function loadQuestionsFromSheet(url) {
+  // Google SheetsのpubURLをCSVエクスポートURLに変換
+  let csvUrl = url.trim();
+  // /pub?output=csv 形式でない場合は変換を試みる
+  if (csvUrl.includes('/edit') || csvUrl.includes('/view')) {
+    csvUrl = csvUrl.replace(/\/(edit|view)[^?]*/, '/pub') + (csvUrl.includes('?') ? '&' : '?') + 'output=csv';
+  } else if (csvUrl.includes('/pub') && !csvUrl.includes('output=csv')) {
+    csvUrl += (csvUrl.includes('?') ? '&' : '?') + 'output=csv';
   }
-};
 
-// ===================== STATE =====================
-let state = {
-  currentSubject: null,
-  currentUnit: null,
-  questions: [],
-  currentIdx: 0,
-  correctCount: 0,
-  answered: false,
-  history: [], // {subject, unit, correct}
-  reviewMode: false,
-};
+  const res = await fetch(csvUrl, { cache: 'no-cache' });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  return parseCSV(text);
+}
 
-function loadProgress() {
-  try { return JSON.parse(localStorage.getItem('studyProgress') || '[]'); } catch { return []; }
+function parseCSV(text) {
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  if (lines.length < 2) throw new Error('データが空です');
+
+  const headers = parseCSVRow(lines[0]).map(h => h.trim().toLowerCase());
+  const result = {};
+
+  for (let i = 1; i < lines.length; i++) {
+    const cols = parseCSVRow(lines[i]);
+    if (cols.length < 4) continue;
+    const row = {};
+    headers.forEach((h, j) => { row[h] = (cols[j] || '').trim(); });
+
+    const subj = row.subject || row['教科'];
+    const unit = row.unit || row['単元'];
+    const type = (row.type || row['形式'] || 'choice').toLowerCase();
+    const q = row.question || row['問題'];
+    const passage = row.passage || row['本文'] || '';
+    const choicesRaw = row.choices || row['選択肢'] || '';
+    const answer = row.answer || row['答え'] || '';
+    const altRaw = row.altanswers || row['別解'] || '';
+    const exp = row.explanation || row['解説'] || '';
+
+    if (!subj || !unit || !q || !answer) continue;
+
+    if (!result[subj]) result[subj] = {};
+    if (!result[subj][unit]) result[subj][unit] = [];
+
+    const qObj = { q, type, answer, exp };
+    if (passage) qObj.passage = passage;
+    if (type === 'choice') {
+      qObj.choices = choicesRaw.split('|').map(c => c.trim()).filter(Boolean);
+      qObj.answer = parseInt(answer) || 0;
+    }
+    if (altRaw) qObj.altAnswers = altRaw.split('|').map(a => a.trim()).filter(Boolean);
+
+    result[subj][unit].push(qObj);
+  }
+
+  if (Object.keys(result).length === 0) throw new Error('有効な問題が見つかりませんでした');
+  return result;
 }
-function saveProgress(history) {
-  localStorage.setItem('studyProgress', JSON.stringify(history));
+
+function parseCSVRow(line) {
+  const result = [];
+  let cur = '';
+  let inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
+      else inQuote = !inQuote;
+    } else if (ch === ',' && !inQuote) {
+      result.push(cur); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  result.push(cur);
+  return result;
 }
-function getHistory() { return loadProgress(); }
+
+async function init() {
+  const url = getSheetUrl();
+  if (!url) { showScreen('setup'); return; }
+
+  showScreen('loading');
+  try {
+    QUESTIONS = await loadQuestionsFromSheet(url);
+    goHome();
+  } catch (e) {
+    showScreen('setup');
+    showError('読み込みに失敗しました：' + e.message + '<br>URLを確認してください。');
+  }
+}
+
+function showError(msg) {
+  const el = document.getElementById('setup-error');
+  el.innerHTML = msg;
+  el.style.display = 'block';
+}
+
+async function saveSheetUrl() {
+  const input = document.getElementById('sheet-url-input').value.trim();
+  if (!input) return;
+  document.getElementById('setup-error').style.display = 'none';
+  showScreen('loading');
+  try {
+    QUESTIONS = await loadQuestionsFromSheet(input);
+    setSheetUrl(input);
+    goHome();
+  } catch (e) {
+    showScreen('setup');
+    showError('接続に失敗しました：' + e.message + '<br>URLとスプレッドシートの公開設定を確認してください。');
+  }
+}
+
+function changeSheetUrl() {
+  document.getElementById('sheet-url-input').value = getSheetUrl();
+  showScreen('setup');
+}
 
 // ===================== UI =====================
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-' + id).classList.add('active');
-  document.getElementById('back-btn').style.display = id === 'home' ? 'none' : 'block';
+  const showBack = !['home','loading','setup'].includes(id);
+  document.getElementById('back-btn').style.display = showBack ? 'block' : 'none';
 }
 
 function showTab(tabId) {
-  document.querySelectorAll('.nav-tab').forEach((t,i) => {
+  document.querySelectorAll('.nav-tab').forEach(t => {
     t.classList.toggle('active', t.getAttribute('onclick').includes(tabId));
   });
   document.getElementById('tab-study').style.display = tabId === 'tab-study' ? 'block' : 'none';
@@ -329,7 +387,6 @@ function showTab(tabId) {
 }
 
 function goBack() {
-  const screens = ['home','units','quiz','result'];
   const active = document.querySelector('.screen.active').id.replace('screen-','');
   if (active === 'units') goHome();
   else if (active === 'quiz') { if (confirm('学習を中断しますか？')) showUnitScreen(state.currentSubject); }
@@ -348,13 +405,14 @@ function updateHomeBadges() {
   ['kokugo','sansu'].forEach(subj => {
     const items = history.filter(h => h.subject === subj);
     const badge = document.getElementById(subj + '-badge');
+    if (!badge) return;
     if (items.length === 0) { badge.textContent = '未学習'; return; }
     const acc = Math.round(items.filter(h => h.correct).length / items.length * 100);
     badge.textContent = `正解率 ${acc}%`;
   });
 }
 
-// ===================== UNIT SCREEN =====================
+// ===================== UNITS =====================
 function selectSubject(subj) {
   state.currentSubject = subj;
   showUnitScreen(subj);
@@ -365,13 +423,17 @@ function showUnitScreen(subj) {
   document.getElementById('header-title').textContent = subj === 'kokugo' ? '国語' : '算数';
   document.getElementById('unit-screen-title').textContent = (subj === 'kokugo' ? '📖 国語' : '🔢 算数') + ' — 単元を選ぼう';
   const history = getHistory();
-  const units = QUESTIONS[subj];
+  const units = QUESTIONS[subj] || {};
   const list = document.getElementById('unit-list');
   list.innerHTML = '';
 
-  // Weak areas first
-  const weakUnits = getWeakUnits(subj, history);
+  if (Object.keys(units).length === 0) {
+    list.innerHTML = '<div class="no-data">この教科の問題がありません。<br>スプレッドシートを確認してください。</div>';
+    showScreen('units');
+    return;
+  }
 
+  const weakUnits = getWeakUnits(subj, history);
   Object.keys(units).forEach(unit => {
     const unitHistory = history.filter(h => h.subject === subj && h.unit === unit);
     const total = unitHistory.length;
@@ -386,51 +448,42 @@ function showUnitScreen(subj) {
     li.innerHTML = `
       <div>
         <div class="unit-name">${unit}</div>
-        <div class="unit-meta">${QUESTIONS[subj][unit].length}問</div>
+        <div class="unit-meta">${units[unit].length}問</div>
       </div>
       <div class="unit-right">
         <div class="unit-acc ${accClass}">${acc !== null ? acc + '%' : '未学習'}</div>
         ${isWeak ? '<div class="weak-badge">苦手！</div>' : ''}
-      </div>
-    `;
+      </div>`;
     list.appendChild(li);
   });
-
   showScreen('units');
 }
 
 function getWeakUnits(subj, history) {
-  return Object.keys(QUESTIONS[subj]).filter(unit => {
+  return Object.keys(QUESTIONS[subj] || {}).filter(unit => {
     const items = history.filter(h => h.subject === subj && h.unit === unit);
     if (items.length < 3) return false;
     return items.filter(h => h.correct).length / items.length < 0.6;
   });
 }
 
+// ===================== STATE =====================
+let state = { currentSubject: null, currentUnit: null, questions: [], currentIdx: 0, correctCount: 0, answered: false, history: [] };
+
+function loadProgress() { try { return JSON.parse(localStorage.getItem('studyProgress') || '[]'); } catch { return []; } }
+function saveProgress(h) { localStorage.setItem('studyProgress', JSON.stringify(h)); }
+function getHistory() { return loadProgress(); }
+
 // ===================== QUIZ =====================
-function startQuiz(subj, unit, reviewMode = false) {
+function startQuiz(subj, unit) {
   state.currentSubject = subj;
   state.currentUnit = unit;
-  state.reviewMode = reviewMode;
-
-  let pool = [...QUESTIONS[subj][unit]];
-  if (reviewMode) {
-    // For review, pick only previously wrong questions
-    const history = getHistory();
-    const wrongUnits = history.filter(h => h.subject === subj && h.unit === unit && !h.correct).map(h => h.qIndex);
-    if (wrongUnits.length > 0) {
-      pool = pool.filter((_, i) => wrongUnits.includes(i));
-    }
-  }
-  // Shuffle
-  pool = pool.map((q, i) => ({...q, origIdx: QUESTIONS[subj][unit].indexOf(q)})).sort(() => Math.random() - 0.5);
+  let pool = [...(QUESTIONS[subj][unit] || [])].map((q, i) => ({...q, origIdx: i})).sort(() => Math.random() - 0.5);
   pool = pool.slice(0, Math.min(pool.length, 10));
-
   state.questions = pool;
   state.currentIdx = 0;
   state.correctCount = 0;
   state.history = [];
-
   document.getElementById('header-title').textContent = unit;
   showScreen('quiz');
   renderQuestion();
@@ -439,21 +492,15 @@ function startQuiz(subj, unit, reviewMode = false) {
 function renderQuestion() {
   const q = state.questions[state.currentIdx];
   const total = state.questions.length;
-  const idx = state.currentIdx;
-
-  document.getElementById('quiz-count').textContent = `${idx + 1}/${total}`;
+  document.getElementById('quiz-count').textContent = `${state.currentIdx + 1}/${total}`;
   document.getElementById('quiz-score-live').textContent = `✓ ${state.correctCount}`;
-  document.getElementById('quiz-progress-fill').style.width = `${(idx / total) * 100}%`;
+  document.getElementById('quiz-progress-fill').style.width = `${(state.currentIdx / total) * 100}%`;
   document.getElementById('quiz-unit-tag').textContent = state.currentUnit;
   document.getElementById('question-text').textContent = q.q;
-
   const passage = document.getElementById('question-passage');
-  if (q.passage) { passage.style.display = 'block'; passage.textContent = q.passage; }
-  else { passage.style.display = 'none'; }
-
+  if (q.passage) { passage.style.display = 'block'; passage.textContent = q.passage; } else { passage.style.display = 'none'; }
   document.getElementById('explanation').classList.remove('show');
   document.getElementById('next-btn').classList.remove('show');
-
   state.answered = false;
   renderAnswerArea(q);
 }
@@ -461,17 +508,13 @@ function renderQuestion() {
 function renderAnswerArea(q) {
   const area = document.getElementById('answer-area');
   if (q.type === 'choice') {
-    area.innerHTML = `<div class="choices">${q.choices.map((c, i) =>
-      `<button class="choice-btn" onclick="answerChoice(${i})">${c}</button>`
-    ).join('')}</div>`;
+    area.innerHTML = `<div class="choices">${(q.choices || []).map((c, i) =>
+      `<button class="choice-btn" onclick="answerChoice(${i})">${c}</button>`).join('')}</div>`;
   } else {
     area.innerHTML = `
       <input class="fill-input" id="fill-input" type="text" placeholder="答えを入力してください" />
-      <button class="submit-btn" id="submit-btn" onclick="answerFill()">答え合わせ</button>
-    `;
-    document.getElementById('fill-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') answerFill();
-    });
+      <button class="submit-btn" id="submit-btn" onclick="answerFill()">答え合わせ</button>`;
+    document.getElementById('fill-input').addEventListener('keydown', e => { if (e.key === 'Enter') answerFill(); });
   }
 }
 
@@ -480,8 +523,7 @@ function answerChoice(idx) {
   state.answered = true;
   const q = state.questions[state.currentIdx];
   const correct = idx === q.answer;
-  const btns = document.querySelectorAll('.choice-btn');
-  btns.forEach((b, i) => {
+  document.querySelectorAll('.choice-btn').forEach((b, i) => {
     b.disabled = true;
     if (i === q.answer) b.classList.add('correct');
     else if (i === idx && !correct) b.classList.add('wrong');
@@ -496,40 +538,27 @@ function answerFill() {
   if (!val) return;
   state.answered = true;
   const q = state.questions[state.currentIdx];
-  const correct = checkFillAnswer(val, q);
+  const norm = s => s.replace(/\s/g,'');
+  const correct = norm(val) === norm(q.answer) || (q.altAnswers || []).some(a => norm(val) === norm(a));
   input.classList.add(correct ? 'correct' : 'wrong');
   input.disabled = true;
   document.getElementById('submit-btn').disabled = true;
   processAnswer(correct, q);
 }
 
-function checkFillAnswer(val, q) {
-  const normalize = s => s.replace(/\s/g,'').replace(/[　]/g,'');
-  const v = normalize(val);
-  if (normalize(q.answer) === v) return true;
-  if (q.altAnswers && q.altAnswers.some(a => normalize(a) === v)) return true;
-  return false;
-}
-
 function processAnswer(correct, q) {
   if (correct) state.correctCount++;
-  state.history.push({ correct, unit: state.currentUnit, subject: state.currentSubject, qIndex: q.origIdx || state.currentIdx });
-
-  // Save to localStorage
+  state.history.push({ correct });
   const globalHistory = getHistory();
-  globalHistory.push({ subject: state.currentSubject, unit: state.currentUnit, correct, qIndex: q.origIdx ?? state.currentIdx, timestamp: Date.now() });
+  globalHistory.push({ subject: state.currentSubject, unit: state.currentUnit, correct, qIndex: q.origIdx, timestamp: Date.now() });
   saveProgress(globalHistory);
-
-  const expEl = document.getElementById('explanation');
-  const resultEl = document.getElementById('explanation-result');
-  resultEl.innerHTML = correct
-    ? '<span class="result-icon">⭕</span> 正解！'
-    : `<span class="result-icon">❌</span> 不正解…　正解：<strong>${q.answer}</strong>`;
+  document.getElementById('explanation-result').innerHTML = correct
+    ? '<span style="font-size:1.5rem">⭕</span> 正解！'
+    : `<span style="font-size:1.5rem">❌</span> 不正解… 正解：<strong>${q.answer}</strong>`;
   document.getElementById('explanation-text').textContent = q.exp;
-  expEl.classList.add('show');
+  document.getElementById('explanation').classList.add('show');
   document.getElementById('next-btn').classList.add('show');
-  document.getElementById('next-btn').textContent =
-    state.currentIdx + 1 >= state.questions.length ? '結果を見る' : '次の問題へ →';
+  document.getElementById('next-btn').textContent = state.currentIdx + 1 >= state.questions.length ? '結果を見る' : '次の問題へ →';
 }
 
 function nextQuestion() {
@@ -543,19 +572,13 @@ function showResult() {
   const total = state.questions.length;
   const correct = state.correctCount;
   const pct = Math.round(correct / total * 100);
-
   document.getElementById('result-score').textContent = `${correct}/${total}`;
   document.getElementById('result-label').textContent = `正解率 ${pct}%`;
   document.getElementById('result-msg').textContent = pct >= 80 ? '🎉 すばらしい！' : pct >= 50 ? '📚 もう少し！' : '💪 復習しよう！';
-
-  const breakdown = document.getElementById('result-breakdown-list');
-  breakdown.innerHTML = state.history.map((h, i) => {
+  document.getElementById('result-breakdown-list').innerHTML = state.history.map((h, i) => {
     const q = state.questions[i];
-    return `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;">
-      ${h.correct ? '⭕' : '❌'} ${q.q.substring(0, 40)}${q.q.length > 40 ? '…' : ''}
-    </div>`;
+    return `<div style="padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:0.85rem;">${h.correct ? '⭕' : '❌'} ${q.q.substring(0, 45)}${q.q.length > 45 ? '…' : ''}</div>`;
   }).join('');
-
   document.getElementById('header-title').textContent = '結果';
   showScreen('result');
 }
@@ -571,11 +594,9 @@ function renderProgress() {
   document.getElementById('stat-correct').textContent = correct;
   document.getElementById('stat-acc').textContent = total > 0 ? Math.round(correct / total * 100) + '%' : '-';
 
-  const detail = document.getElementById('progress-detail');
   let html = '';
-
-  ['kokugo','sansu'].forEach(subj => {
-    const subjName = subj === 'kokugo' ? '📖 国語' : '🔢 算数';
+  Object.keys(QUESTIONS).forEach(subj => {
+    const subjName = subj === 'kokugo' ? '📖 国語' : subj === 'sansu' ? '🔢 算数' : subj;
     const subjHistory = history.filter(h => h.subject === subj);
     if (subjHistory.length === 0) return;
     html += `<div class="card"><div class="card-title">${subjName}</div>`;
@@ -586,55 +607,39 @@ function renderProgress() {
       const cls = acc >= 80 ? 'acc-good' : acc >= 50 ? 'acc-mid' : 'acc-bad';
       html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f5f5f5;">
         <span style="font-size:0.9rem">${unit}</span>
-        <span class="${cls}" style="font-weight:700;font-size:0.9rem">${acc}% (${items.length}問)</span>
-      </div>`;
+        <span class="${cls}" style="font-weight:700;font-size:0.9rem">${acc}% (${items.length}問)</span></div>`;
     });
     html += '</div>';
   });
 
-  // Weak areas
   const weakAll = [];
-  ['kokugo','sansu'].forEach(subj => {
-    getWeakUnits(subj, history).forEach(unit => weakAll.push({ subj, unit }));
-  });
+  Object.keys(QUESTIONS).forEach(subj => getWeakUnits(subj, history).forEach(unit => weakAll.push({ subj, unit })));
   if (weakAll.length > 0) {
     html += `<div class="card"><div class="card-title" style="color:#ef4444">🔴 苦手単元</div>`;
     weakAll.forEach(({ subj, unit }) => {
       html += `<div class="weak-item" onclick="startQuiz('${subj}','${unit}')">
-        <div>
-          <div class="weak-item-name">${unit}</div>
-          <div style="font-size:0.75rem;color:#6b7280">${subj === 'kokugo' ? '国語' : '算数'}</div>
-        </div>
-        <button class="review-btn" onclick="event.stopPropagation();startQuiz('${subj}','${unit}')">復習する</button>
-      </div>`;
+        <div><div class="weak-item-name">${unit}</div><div style="font-size:0.75rem;color:#6b7280">${subj === 'kokugo' ? '国語' : '算数'}</div></div>
+        <button class="review-btn">復習する</button></div>`;
     });
     html += '</div>';
   }
-
-  if (html === '') html = '<div class="no-data">まだデータがありません。学習を始めましょう！</div>';
-  detail.innerHTML = html;
+  document.getElementById('progress-detail').innerHTML = html || '<div class="no-data">まだデータがありません。</div>';
 }
 
 function renderWeakSummaryHome() {
   const history = getHistory();
   const weakAll = [];
-  ['kokugo','sansu'].forEach(subj => {
-    getWeakUnits(subj, history).forEach(unit => weakAll.push({ subj, unit }));
-  });
+  Object.keys(QUESTIONS).forEach(subj => getWeakUnits(subj, history).forEach(unit => weakAll.push({ subj, unit })));
   const el = document.getElementById('weak-summary-home');
   if (weakAll.length === 0) { el.innerHTML = ''; return; }
-  el.innerHTML = `<div class="card">
-    <div class="card-title" style="color:#ef4444">🔴 苦手単元を復習しよう</div>
-    ${weakAll.map(({ subj, unit }) => `
-      <div class="weak-item" onclick="startQuiz('${subj}','${unit}')">
-        <div class="weak-item-name">${unit} <span style="color:#6b7280;font-size:0.8rem">(${subj === 'kokugo' ? '国語' : '算数'})</span></div>
-        <button class="review-btn">復習する</button>
-      </div>`).join('')}
-  </div>`;
+  el.innerHTML = `<div class="card"><div class="card-title" style="color:#ef4444">🔴 苦手単元を復習しよう</div>
+    ${weakAll.map(({ subj, unit }) => `<div class="weak-item" onclick="startQuiz('${subj}','${unit}')">
+      <div class="weak-item-name">${unit} <span style="color:#6b7280;font-size:0.8rem">(${subj === 'kokugo' ? '国語' : '算数'})</span></div>
+      <button class="review-btn">復習する</button></div>`).join('')}</div>`;
 }
 
-// ===================== INIT =====================
-goHome();
+// ===================== START =====================
+init();
 </script>
 </body>
 </html>
