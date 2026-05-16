@@ -555,8 +555,8 @@ function processAnswer(correct, q) {
   document.getElementById('explanation-result').innerHTML = correct
     ? '<span style="font-size:1.5rem">⭕</span> 正解！'
     : `<span style="font-size:1.5rem">❌</span> 不正解… 正解：<strong>${q.answer}</strong>`;
-  document.getElementById('explanation-text').textContent = q.exp;
-  document.getElementById('explanation').classList.add('show');
+  document.getElementById('explanation-text').textContent = correct ? '' : q.exp;
+  if (!correct) document.getElementById('explanation').classList.add('show');
   document.getElementById('next-btn').classList.add('show');
   document.getElementById('next-btn').textContent = state.currentIdx + 1 >= state.questions.length ? '結果を見る' : '次の問題へ →';
 }
