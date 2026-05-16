@@ -261,7 +261,16 @@ async function loadQuestionsFromSheet(url) {
     csvUrl += (csvUrl.includes('?') ? '&' : '?') + 'output=csv';
   }
 
-  const res = await fetch(csvUrl, { cache: 'no-cache' });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
+  let res;
+  try {
+    res = await fetch(csvUrl, { cache: 'no-cache', signal: controller.signal });
+  } catch (e) {
+    throw new Error('接続がタイムアウトしました。URLを確認してください。');
+  } finally {
+    clearTimeout(timer);
+  }
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const text = await res.text();
   return parseCSV(text);
