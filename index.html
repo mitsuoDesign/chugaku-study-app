@@ -248,7 +248,8 @@
 // ===================== CSV / SHEET =====================
 let QUESTIONS = {}; // { subject: { unit: [questions] } }
 
-function getSheetUrl() { return localStorage.getItem('sheetUrl') || ''; }
+const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSoqDF_LNaZ31KhZWdKJrL8_SnOC8uXBe9QdSDY4DH8R1XYxkhTX-gsGWX0UbBu-bgg-ufadowFkoai/pub?gid=1564596160&single=true&output=csv';
+function getSheetUrl() { return localStorage.getItem('sheetUrl') || DEFAULT_SHEET_URL; }
 function setSheetUrl(url) { localStorage.setItem('sheetUrl', url); }
 
 async function loadQuestionsFromSheet(url) {
