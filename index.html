@@ -63,6 +63,9 @@
   .acc-mid { color: #f59e0b; }
   .acc-bad { color: #ef4444; }
   .weak-badge { font-size: 0.7rem; background: #fee2e2; color: #ef4444; padding: 2px 8px; border-radius: 20px; margin-top: 4px; display: inline-block; }
+  .check-badge { font-size: 0.7rem; background: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 20px; margin-top: 4px; display: inline-block; }
+  .master-badge { font-size: 0.7rem; background: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 20px; margin-top: 4px; display: inline-block; }
+  .streak-tag { font-size: 0.72rem; color: #d97706; font-weight: 700; margin-left: 6px; }
 
   /* Quiz */
   .quiz-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -454,15 +457,17 @@ function showUnitScreen(subj) {
     const li = document.createElement('li');
     li.className = `unit-item ${subj}${isWeak ? ' weak' : ''}`;
     li.onclick = () => startQuiz(subj, unit);
+    const { total: mTotal, mastered, needsCheck } = getMasteryStats(subj, unit);
+    const allMastered = mastered === mTotal && mTotal > 0;
     const accClass = acc === null ? '' : acc >= 80 ? 'acc-good' : acc >= 50 ? 'acc-mid' : 'acc-bad';
     li.innerHTML = `
       <div>
         <div class="unit-name">${unit}</div>
-        <div class="unit-meta">${units[unit].length}問</div>
+        <div class="unit-meta">${mTotal}問 ／ 定着 ${mastered}問</div>
       </div>
       <div class="unit-right">
         <div class="unit-acc ${accClass}">${acc !== null ? acc + '%' : '未学習'}</div>
-        ${isWeak ? '<div class="weak-badge">苦手！</div>' : ''}
+        ${allMastered ? '<div class="master-badge">✅ 完全定着</div>' : needsCheck > 0 ? `<div class="check-badge">要確認 ${needsCheck}問</div>` : isWeak ? '<div class="weak-badge">苦手！</div>' : ''}
       </div>`;
     list.appendChild(li);
   });
@@ -484,12 +489,33 @@ function loadProgress() { try { return JSON.parse(localStorage.getItem('studyPro
 function saveProgress(h) { localStorage.setItem('studyProgress', JSON.stringify(h)); }
 function getHistory() { return loadProgress(); }
 
+// ===================== MASTERY =====================
+function getMastery() { try { return JSON.parse(localStorage.getItem('questionMastery') || '{}'); } catch { return {}; } }
+function saveMastery(m) { localStorage.setItem('questionMastery', JSON.stringify(m)); }
+function masteryKey(subj, unit, idx) { return `${subj}__${unit}__${idx}`; }
+function getStreak(subj, unit, idx) { return getMastery()[masteryKey(subj, unit, idx)] || 0; }
+function isMastered(subj, unit, idx) { return getStreak(subj, unit, idx) >= 2; }
+
+function getMasteryStats(subj, unit) {
+  const total = (QUESTIONS[subj]?.[unit] || []).length;
+  let mastered = 0, needsCheck = 0;
+  for (let i = 0; i < total; i++) {
+    const s = getStreak(subj, unit, i);
+    if (s >= 2) mastered++;
+    else if (s === 1) needsCheck++;
+  }
+  return { total, mastered, needsCheck };
+}
+
 // ===================== QUIZ =====================
 function startQuiz(subj, unit) {
   state.currentSubject = subj;
   state.currentUnit = unit;
-  let pool = [...(QUESTIONS[subj][unit] || [])].map((q, i) => ({...q, origIdx: i})).sort(() => Math.random() - 0.5);
-  pool = pool.slice(0, Math.min(pool.length, 10));
+  let pool = [...(QUESTIONS[subj][unit] || [])].map((q, i) => ({...q, origIdx: i}));
+  // 未定着（streak<2）を先に、その中でシャッフル
+  const unmastered = pool.filter(q => !isMastered(subj, unit, q.origIdx)).sort(() => Math.random() - 0.5);
+  const mastered   = pool.filter(q =>  isMastered(subj, unit, q.origIdx)).sort(() => Math.random() - 0.5);
+  pool = [...unmastered, ...mastered].slice(0, Math.min(pool.length, 10));
   state.questions = pool;
   state.currentIdx = 0;
   state.correctCount = 0;
@@ -562,8 +588,15 @@ function processAnswer(correct, q) {
   const globalHistory = getHistory();
   globalHistory.push({ subject: state.currentSubject, unit: state.currentUnit, correct, qIndex: q.origIdx, timestamp: Date.now() });
   saveProgress(globalHistory);
+  // streak更新
+  const mastery = getMastery();
+  const key = masteryKey(state.currentSubject, state.currentUnit, q.origIdx);
+  mastery[key] = correct ? (mastery[key] || 0) + 1 : 0;
+  saveMastery(mastery);
+  const streak = mastery[key];
+  const justMastered = correct && streak === 2;
   document.getElementById('explanation-result').innerHTML = correct
-    ? '<span style="font-size:1.5rem">⭕</span> 正解！'
+    ? `<span style="font-size:1.5rem">⭕</span> 正解！${justMastered ? ' <span style="color:#059669;font-size:0.9rem">🎉 定着！</span>' : streak === 1 ? ' <span class="streak-tag">あと1回正解で定着</span>' : ''}`
     : `<span style="font-size:1.5rem">❌</span> 不正解… 正解：<strong>${q.answer}</strong>`;
   document.getElementById('explanation-text').textContent = correct ? '' : q.exp;
   if (!correct) document.getElementById('explanation').classList.add('show');
