@@ -550,7 +550,11 @@ function renderAnswerArea(q) {
     area.innerHTML = `
       <input class="fill-input" id="fill-input" type="text" placeholder="答えを入力してください" />
       <button class="submit-btn" id="submit-btn" onclick="answerFill()">答え合わせ</button>`;
-    document.getElementById('fill-input').addEventListener('keydown', e => { if (e.key === 'Enter') answerFill(); });
+    let isComposing = false;
+    const fi = document.getElementById('fill-input');
+    fi.addEventListener('compositionstart', () => { isComposing = true; });
+    fi.addEventListener('compositionend', () => { isComposing = false; });
+    fi.addEventListener('keydown', e => { if (e.key === 'Enter' && !isComposing) answerFill(); });
   }
 }
 
