@@ -553,7 +553,7 @@ function renderAnswerArea(q) {
     let isComposing = false;
     const fi = document.getElementById('fill-input');
     fi.addEventListener('compositionstart', () => { isComposing = true; });
-    fi.addEventListener('compositionend', () => { isComposing = false; });
+    fi.addEventListener('compositionend', () => { setTimeout(() => { isComposing = false; }, 50); });
     fi.addEventListener('keydown', e => { if (e.key === 'Enter' && !isComposing) answerFill(); });
   }
 }
